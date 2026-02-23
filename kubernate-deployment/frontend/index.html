@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Soil Classification</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h2>Soil Property Classification</h2>
+
+        <form id="soilForm">
+            <label>pH:</label><br>
+            <input type="number" step="any" id="ph" required><br><br>
+
+            <label>EC:</label><br>
+            <input type="number" step="any" id="ec" required><br><br>
+
+            <label>Bulk Density (BD):</label><br>
+            <input type="number" id="bd" step="any" required><br><br>
+
+            <label>Porosity (PR):</label><br>
+            <input type="number" id="pr" step="any" required><br><br>
+
+            <label>Moisture Content (MC):</label><br>
+            <input type="number" id="mc" step="any" required><br><br>
+
+            <button type="submit">Predict</button>
+        </form>
+
+        <div id="resultContainer" style="display:none; margin-top: 20px;">
+            <h3>Prediction Result: <span id="predictionText"></span></h3>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('soilForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = {
+                ph: document.getElementById('ph').value,
+                ec: document.getElementById('ec').value,
+                bd: document.getElementById('bd').value,
+                pr: document.getElementById('pr').value,
+                mc: document.getElementById('mc').value
+            };
+
+            try {
+                // Kubernetes (Docker Desktop): backend exposed as LoadBalancer on localhost:5000
+                // Local without Docker: localhost:5000 (Flask default)
+                const response = await fetch('http://localhost:5000/classify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                const data = await response.json();
+
+                // Display the result
+                document.getElementById('predictionText').innerText = data.prediction;
+                document.getElementById('resultContainer').style.display = 'block';
+            } catch (error) {
+                console.error('Error:', error);
+                alert("Error: Check if backend is running on port 5000");
+            }
+        });
+    </script>
+</body>
+
+</html>

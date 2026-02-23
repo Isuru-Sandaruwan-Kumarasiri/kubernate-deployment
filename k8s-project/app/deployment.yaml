@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: student-app
+  namespace: student-project
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: student-app
+  template:
+    metadata:
+      labels:
+        app: student-app
+    spec:
+      template:
+      containers:
+      - name: nginx-container
+        image: nginx:1.25
+        ports:
+          - containerPort: 80
+
+
+# kubectl apply -f app/deployment.yaml
+# kubectl get deployment -n student-project 

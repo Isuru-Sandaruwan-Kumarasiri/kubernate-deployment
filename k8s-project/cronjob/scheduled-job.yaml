@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: daily-report
+  namespace: student-project
+spec:
+  schedule: "*/1 * * * *"   # every minute
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: report-generator
+              image: busybox
+              command:
+                - sh
+                - -c
+                - |
+                  echo "Generating Report"
+                  sleep 5
+                  echo "Report generated"
+          restartPolicy: OnFailure
+
+
+#kubectl apply -f cronjob/scheduled-job.yaml
+#kubectl get pods -n  student-project -w
